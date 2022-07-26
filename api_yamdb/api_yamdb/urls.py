@@ -25,5 +25,3 @@ urlpatterns = [
         name='redoc'
     ),
 ]
-
-# commit 
