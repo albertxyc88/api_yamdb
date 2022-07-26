@@ -9,5 +9,5 @@ urlpatterns = [
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
-    path('', include('reviews.urls', namespace='reviews')),
+    # path('', include('reviews.urls', namespace='reviews')),
 ]
