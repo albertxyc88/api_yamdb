@@ -1,8 +1,26 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 from .validators import validate_year
 
 STR_NUMBER = 15
+CHOICES = [
+    ('user', 'user'),
+    ('moderator', 'moderator'),
+    ('admin', 'admin'),
+]
+
+
+class User(AbstractUser):
+
+    email = models.EmailField(
+        'email address',
+        unique=True,
+        null=False,
+        blank=False
+    )
+    bio = models.TextField('biography', blank=True)
+    role = models.CharField(max_length=100, choices=CHOICES, default='user')
 
 
 class Genre(models.Model):
@@ -113,7 +131,7 @@ class Review(models.Model):
         verbose_name='Краткое название отзыва'
     )
     text = models.TextField(
-        blank=False, 
+        blank=False,
         verbose_name='Текст отзыва',
     )
     pub_date = models.DateTimeField(
@@ -174,4 +192,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text[:STR_NUMBER]
-
