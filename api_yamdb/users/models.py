@@ -19,3 +19,7 @@ class User(AbstractUser):
     )
     bio = models.TextField('biography', blank=True)
     role = models.CharField(max_length=100, choices=CHOICES, default='user')
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'

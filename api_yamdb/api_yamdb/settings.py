@@ -15,18 +15,14 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'reviews',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
-    'reviews.apps.ReviewsConfig'
-=======
+    'reviews.apps.ReviewsConfig',
     'users.apps.UsersConfig'
->>>>>>> 205a839 (user model created)
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,6 @@
 from django.db import models
 
+from users.models import User
 from .validators import validate_year
 
 STR_NUMBER = 15
@@ -113,7 +114,7 @@ class Review(models.Model):
         verbose_name='Краткое название отзыва'
     )
     text = models.TextField(
-        blank=False, 
+        blank=False,
         verbose_name='Текст отзыва',
     )
     pub_date = models.DateTimeField(
