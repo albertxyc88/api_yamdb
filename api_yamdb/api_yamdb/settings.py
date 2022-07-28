@@ -23,10 +23,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'users',
     'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+=======
+    'reviews.apps.ReviewsConfig',
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
+    'rest_framework',
+>>>>>>> deb1296 (Changing workspace.)
     'django_filters',
 ]
 
@@ -109,6 +116,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
+<<<<<<< HEAD
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 REST_FRAMEWORK = {
@@ -137,3 +145,13 @@ EMAIL_HOST_USER = "noreply_team7@yamdb.ru"
 EMAIL_HOST_PASSWORD = "somepassword123"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+=======
+AUTH_USER_MODEL = 'users.User'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+}
+>>>>>>> deb1296 (Changing workspace.)
