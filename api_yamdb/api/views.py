@@ -1,12 +1,13 @@
+import uuid
 from django.core.mail import send_mail
 from rest_framework import permissions
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import LoginSerializer, UserSerializer, UserEmailSerializer, CodeSerializer
 from rest_framework import viewsets
-from .permissions import AdminPermission, ModeratorPermission, UserPermission, OwnerPermission, IsAdminOrReadOnly, IsAdminOrSuperUser
+from .permissions import IsAdmin, ModeratorPermission, UserPermission, OwnerPermission, IsAdminOrReadOnly, IsAdminOrSuperUser
 from .pagination import UserPagination
 from rest_framework import filters, viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes
@@ -16,14 +17,15 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, viewsets
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
+from rest_framework import exceptions
+from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Title
-from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer)
-
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer, EmailSerializer, UserSerializer, ConfirmationCodeSerializer
+from .utils import send_code
 
 User = get_user_model()
-
-
 # class UserViewSet(viewsets.ModelViewSet):
 #     queryset = User.objects.all()
 #     serializer_class = UserSerializer
@@ -93,10 +95,10 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (AdminPermission,)
+    permission_classes = (IsAdmin,)
     lookup_field = 'username'
     lookup_value_regex = r'[\w\@\.\+\-]+'
-    filter_backends = (filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ('username',)
 
     @action(
@@ -117,26 +119,55 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def send_confirmation_code(request):
-    serializer = UserEmailSerializer(data=request.data)
+    serializer = EmailSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data.get('username')
     email = serializer.validated_data.get('email')
-    if not User.objects.filter(email=email).exists():
-        User.objects.create(
-            username=email, email=email
-        )
-    user = User.objects.filter(email=email).first()
-    confirmation_code = default_token_generator.make_token(user)
-    send_mail(
-        'Код подтверждения Yamdb',
-        f'Ваш код подтверждения: {confirmation_code}',
-        'yamdb@yamdb.com',
-        [email],
-        fail_silently=False
-    )
-    return Response(
-        {'result': 'Код подтверждения успешно отправлен!'},
-        status=status.HTTP_200_OK
-    )
+    if User.objects.filter(username=username).exists() is False:
+        user = User.objects.create_user(username=username, email=email)
+        send_code(email, user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    user = get_object_or_404(User, username=username, email=email)
+    send_code(email, user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def obtain_token(request):
+    serializer = ConfirmationCodeSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data.get('username')
+    user = get_object_or_404(User, username=username)
+    confirmation_code = serializer.validated_data['confirmation_code']
+    if confirmation_code == user.confirmation_code:
+        token = AccessToken.for_user(user)
+        return Response({'token': str(token)}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['POST'])
+# @permission_classes([permissions.AllowAny])
+# def send_confirmation_code(request):
+#     serializer = UserEmailSerializer(data=request.data)
+#     serializer.is_valid(raise_exception=True)
+#     email = serializer.validated_data.get('email')
+#     if not User.objects.filter(email=email).exists():
+#         User.objects.create(
+#             username=email, email=email
+#         )
+#     user = User.objects.filter(email=email).first()
+#     confirmation_code = default_token_generator.make_token(user)
+#     send_mail(
+#         'Код подтверждения Yamdb',
+#         f'Ваш код подтверждения: {confirmation_code}',
+#         'yamdb@yamdb.com',
+#         [email],
+#         fail_silently=False
+#     )
+#     return Response(
+#         {'result': 'Код подтверждения успешно отправлен!'},
+#         status=status.HTTP_200_OK
+#     )
 
 # @api_view(['POST'])
 # @permission_classes([AllowAny])

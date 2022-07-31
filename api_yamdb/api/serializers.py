@@ -3,12 +3,45 @@ from django.core.mail import send_mail
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from reviews.models import Category, Genre, Title
+from .validators import is_correct_username, is_correct_email
 
 User = get_user_model()
 
 
-class UserEmailSerializer(serializers.Serializer):
+class EmailSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email',)
+    
+    def validate_username(self, username):
+        return is_correct_username(username)
+    
+    def validate_email(self, email):
+        return is_correct_email(email)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    
+    def validate_username(self, username):
+        return is_correct_username(username)
+    
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'bio', 'role', 'email')
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('username', 'email')
+            )
+        ]
+
+
+class ConfirmationCodeSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
 # class UserEmailSerializer(serializers.ModelSerializer):
 #     email = serializers.EmailField(required=True)
@@ -25,11 +58,6 @@ class UserEmailSerializer(serializers.Serializer):
 #         return data
 
 
-class CodeSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
-    confirmation_code = serializers.CharField(required=True)
-
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,23 +73,6 @@ class LoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('email is required')
         return data
 
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'first_name',
-            'last_name',
-            'username',
-            'bio',
-            'role',
-            'email'
-        )
-    
-    def validate(self, data):
-        if data.get('username') == 'me':
-            raise serializers.ValidationError('использовать имя "me" запрещено!')
-        return data
 
 
 class CategorySerializer(serializers.ModelSerializer):

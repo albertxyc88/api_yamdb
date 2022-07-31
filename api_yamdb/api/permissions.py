@@ -1,84 +1,9 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 from rest_framework import permissions
-from users.models import User
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
 
 class UserPermission(permissions.BasePermission):
 
@@ -98,11 +23,11 @@ class ModeratorPermission(permissions.BasePermission):
         return False
 
 
-class AdminPermission(permissions.BasePermission):
+class IsAdmin(permissions.BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-        if user.is_authenticated and user.role == 'ADMIN':
+        if user.is_authenticated and (user.role == 'ADMIN' or user.is_superuser):
             return True
         return False
 
