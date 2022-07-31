@@ -53,10 +53,7 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         verbose_name='Год',
-<<<<<<< HEAD
-=======
         validators=(validate_year,)
->>>>>>> 283c4e27d59e0567cd8b250b679a337811c67b7c
     )
     rating = models.IntegerField(
         verbose_name='Рейтинг',
@@ -110,13 +107,6 @@ class GenreTitle(models.Model):
     def __str__(self):
         return f'{self.title} - {self.genre}'
 
-<<<<<<< HEAD
-# Моя часть
-
-STR_NUMBER = 15
-
-=======
->>>>>>> 283c4e27d59e0567cd8b250b679a337811c67b7c
 
 class Review(models.Model):
     name = models.CharField(
@@ -124,11 +114,7 @@ class Review(models.Model):
         verbose_name='Краткое название отзыва'
     )
     text = models.TextField(
-<<<<<<< HEAD
-        blank=False, 
-=======
         blank=False,
->>>>>>> 283c4e27d59e0567cd8b250b679a337811c67b7c
         verbose_name='Текст отзыва',
     )
     pub_date = models.DateTimeField(
@@ -188,8 +174,4 @@ class Comment(models.Model):
         ordering = ('review', )
 
     def __str__(self):
-<<<<<<< HEAD
         return self.text[:STR_NUMBER]
-=======
-        return self.text[:STR_NUMBER]
->>>>>>> 283c4e27d59e0567cd8b250b679a337811c67b7c

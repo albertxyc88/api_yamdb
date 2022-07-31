@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class IsAuthenticatedOrReadOnly(permissions.BasePermission):
+class Is_AuthorAdminModeratorCreate_Or_ReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
 
@@ -10,7 +10,16 @@ class IsAuthenticatedOrReadOnly(permissions.BasePermission):
     
     def has_object_permission(self, request, view, obj):
 
-        if obj.author != request.user:
+        if (
+            request.user != obj.author or
+            request.user.role == 'moderator' or
+            request.user.role == 'admin'
+        ):
             return False
 
         return True
+
+class AllowwAnyPlease(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if self.request.method == 'GET':
+            return True
