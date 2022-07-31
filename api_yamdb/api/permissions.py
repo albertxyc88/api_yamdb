@@ -23,11 +23,11 @@ class ModeratorPermission(permissions.BasePermission):
         return False
 
 
-class IsAdmin(permissions.BasePermission):
+class IsAdminOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-        if user.is_authenticated and (user.role == 'ADMIN' or user.is_superuser):
+        if user.is_authenticated and (user.is_admin or user.is_superuser or user.is_staff):
             return True
         return False
 

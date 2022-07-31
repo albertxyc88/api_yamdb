@@ -28,6 +28,9 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_username(self, username):
         return is_correct_username(username)
     
+    def validate_email(self, email):
+        return is_correct_email(email)
+    
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'bio', 'role', 'email')
@@ -37,6 +40,16 @@ class UserSerializer(serializers.ModelSerializer):
                 fields=('username', 'email')
             )
         ]
+
+
+class RoleSerializer(UserSerializer):
+    role = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'first_name', 'last_name', 'email', 'bio', 'role'
+        )
 
 
 class ConfirmationCodeSerializer(serializers.Serializer):
