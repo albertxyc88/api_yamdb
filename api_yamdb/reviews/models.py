@@ -1,7 +1,7 @@
 from django.db import models
 
 from users.models import User
-from .validators import validate_year
+from .validators import validate_slug, validate_year
 
 STR_NUMBER = 15
 
@@ -34,7 +34,8 @@ class Category(models.Model):
     slug = models.CharField(
         verbose_name='url',
         max_length=50,
-        unique=True
+        unique=True,
+        validators=(validate_slug,)
     )
 
     class Meta:
