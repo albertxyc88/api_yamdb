@@ -12,8 +12,6 @@ def validate_year(year):
 
 
 def validate_slug(slug):
-    print(slug)
-    print(re.match(r'^[-a-zA-Z0-9_]+$', slug))
     if re.search(r'^[-a-zA-Z0-9_]+$', slug) is None:
         raise ValidationError(
             f'{slug} введен неверно. Может состоять из латинских букв, цифр, '

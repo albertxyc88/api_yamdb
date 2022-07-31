@@ -14,7 +14,8 @@ class Genre(models.Model):
     slug = models.CharField(
         verbose_name='url',
         max_length=50,
-        unique=True
+        unique=True,
+        validators=(validate_slug,)
     )
 
     class Meta:
@@ -125,13 +126,13 @@ class Review(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='review',
+        related_name='reviews',
         verbose_name='Автор',
     )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='review',
+        related_name='reviews',
         verbose_name='Произведение',
     )
     score = models.IntegerField(
