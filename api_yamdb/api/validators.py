@@ -12,7 +12,7 @@ def is_correct_username(username):
         raise serializers.ValidationError('This username is already taken')
     if username == 'me':
         raise serializers.ValidationError('username "me" is forbidden')
-    if username is None:
+    if username is None or username == '':
         raise serializers.ValidationError('Username field is required')
     return username
 
@@ -20,6 +20,6 @@ def is_correct_username(username):
 def is_correct_email(email):
     if User.objects.filter(email=email).exists():
         raise serializers.ValidationError('This email is already taken')
-    if email is None:
+    if email is None or email == '':
         raise serializers.ValidationError('Email field is required')
     return email

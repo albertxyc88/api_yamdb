@@ -16,6 +16,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'reviews',
+    'api',
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -23,9 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users.apps.UsersConfig',
+    'rest_framework_simplejwt',
     'django_filters',
-    'reviews.apps.ReviewsConfig'
 ]
 
 MIDDLEWARE = [
@@ -108,17 +110,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 5,
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
@@ -128,17 +126,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-AUTH_USER_MODEL = 'users.User' 
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+AUTH_USER_MODEL = 'users.User'
 
 EMAIL_HOST = 'smtp.yandex.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = "noreply14324324322534@yandex.ru"
-EMAIL_HOST_PASSWORD = "somepassword"
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-SERVER_EMAIL = EMAIL_HOST_USER
+
+EMAIL_HOST_USER = "noreply_team7@yamdb.ru"
+
+EMAIL_HOST_PASSWORD = "somepassword123"
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

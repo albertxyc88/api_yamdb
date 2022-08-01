@@ -1,22 +1,19 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .views import send_confirmation_code, obtain_token, UserViewSet
-from .views import CategoryViewSet, GenreViewSet, TitleViewSet
+from rest_framework import routers
+
+from .views import (CategoryViewSet, GenreViewSet,TitleViewSet, UserViewSet,
+                    send_confirmation_code, obtain_token)
 
 
-router_v1 = DefaultRouter()
-router_v1.register('users', UserViewSet)
-router_v1.register('categories', CategoryViewSet, basename='categories')
-router_v1.register('genre', GenreViewSet, basename='genre')
-router_v1.register('title', TitleViewSet, basename='title')
+router = routers.SimpleRouter()
+router.register(r'users', UserViewSet, basename='users')
+router.register(r'titles', TitleViewSet, basename='titles')
+router.register(r'categories', CategoryViewSet, basename='categories')
+router.register(r'genres', GenreViewSet, basename='categories')
 
 
 urlpatterns = [
-    path('v1/auth/signup/', send_confirmation_code),
-    path('v1/auth/token/', obtain_token),
-    # path('v1/users/', UserListView.as_view()),
-    # path('v1/users/<str:username>/', UserDetailView.as_view()),
-    path('v1/', include(router_v1.urls)),
+    path('v1/auth/signup/', send_confirmation_code, name='signup'),
+    path('v1/auth/token/', obtain_token, name='token'),
+    path('v1/', include(router.urls)),
 ]
-

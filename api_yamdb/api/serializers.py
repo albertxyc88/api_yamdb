@@ -1,5 +1,6 @@
 from random import randint, randrange
 from django.core.mail import send_mail
+from django.forms import ValidationError
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from reviews.models import Category, Genre, Title
@@ -9,21 +10,24 @@ User = get_user_model()
 
 
 class EmailSerializer(serializers.Serializer):
+    """Email serializer"""
+
     username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
 
-    class Meta:
-        model = User
-        fields = ('username', 'email',)
-    
     def validate_username(self, username):
         return is_correct_username(username)
     
     def validate_email(self, email):
         return is_correct_email(email)
 
+    class Meta:
+        model = User
+        fields = ('username', 'email',)
+
 
 class UserSerializer(serializers.ModelSerializer):
+    """User serializer"""
     
     def validate_username(self, username):
         return is_correct_username(username)
@@ -43,6 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(UserSerializer):
+    """Role Serializer"""
+
     role = serializers.CharField(read_only=True)
 
     class Meta:
@@ -51,40 +57,17 @@ class RoleSerializer(UserSerializer):
             'username', 'first_name', 'last_name', 'email', 'bio', 'role'
         )
 
+    def validate(self, data):
+        if data.get('role') == 'user':
+            raise ValidationError('User cannot change his role')
+        return data
+
 
 class ConfirmationCodeSerializer(serializers.Serializer):
+    """Confirmation code serializer"""
+
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-
-# class UserEmailSerializer(serializers.ModelSerializer):
-#     email = serializers.EmailField(required=True)
-
-#     class Meta:
-#         model = User
-#         fields = (
-#             'username', 'first_name', 'last_name', 'email', 'bio', 'role'
-#         )
-    
-#     def validate(self, data):
-#         if data.get('username') == 'me':
-#             raise serializers.ValidationError('использовать имя "me" запрещено!')
-#         return data
-
-
-
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'email')
-
-    def validate(self, data):
-        if data.get('username') is None:
-            raise serializers.ValidationError('username is required')
-        if data.get('username') == 'me':
-            raise serializers.ValidationError('cannot login with username "me"')
-        if data.get('email') is None:
-            raise serializers.ValidationError('email is required')
-        return data
 
 
 
