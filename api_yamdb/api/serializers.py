@@ -44,6 +44,10 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
+    class Meta:
+        fields = '__all__'
+        model = Title
+
 
 class EmailSerializer(serializers.Serializer):
     """Email serializer"""
