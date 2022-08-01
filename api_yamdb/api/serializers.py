@@ -1,5 +1,3 @@
-from random import randint, randrange
-from django.core.mail import send_mail
 from django.forms import ValidationError
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -17,7 +15,7 @@ class EmailSerializer(serializers.Serializer):
 
     def validate_username(self, username):
         return is_correct_username(username)
-    
+
     def validate_email(self, email):
         return is_correct_email(email)
 
@@ -28,16 +26,23 @@ class EmailSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """User serializer"""
-    
+
     def validate_username(self, username):
         return is_correct_username(username)
-    
+
     def validate_email(self, email):
         return is_correct_email(email)
-    
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'bio', 'role', 'email')
+        fields = (
+            'first_name',
+            'last_name',
+            'username',
+            'bio',
+            'role',
+            'email'
+        )
         validators = [
             serializers.UniqueTogetherValidator(
                 queryset=User.objects.all(),
@@ -68,7 +73,6 @@ class ConfirmationCodeSerializer(serializers.Serializer):
 
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-
 
 
 class CategorySerializer(serializers.ModelSerializer):

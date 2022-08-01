@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import (CategoryViewSet, GenreViewSet,TitleViewSet, UserViewSet,
+from .views import (CategoryViewSet, GenreViewSet, TitleViewSet, UserViewSet,
                     send_confirmation_code, obtain_token)
 
 

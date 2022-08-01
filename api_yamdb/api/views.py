@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,7 +9,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Title
 from .permissions import IsAdminOnly, IsAdminOrReadOnly, ReadOnly
-from .serializers import(
+from .serializers import (
     EmailSerializer,
     UserSerializer,
     RoleSerializer,
