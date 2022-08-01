@@ -7,15 +7,13 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from .serializers import CommentSerializer, ReviewSerializer
 
-from .permissions import Is_AuthorAdminModeratorCreate_Or_ReadOnly, AllowwAnyPlease
+from .permissions import Is_AuthorAdminModeratorCreate_Or_ReadOnly
 from reviews.models import Review, Title
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (AllowAny, )
-    # permission_classes = [AllowwAnyPlease]
-    pagination_class = LimitOffsetPagination
+    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
 
     def get_queryset(self):
         """Список отзывов под определёным произведением."""
@@ -30,21 +28,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         Права доступа: Аутентифицированные пользователи.
         """
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Review, id=title_id)
-        print(title)
-        review_title = Review.objects.get(
-            author_id=self.kwargs.get('author_id'),
-            title_id=self.kwargs.get('title_id'),
-        )
-        
-        if review_title == None:
-            serializer.save(author=self.request.user, title=title)
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly)
-    pagination_class = LimitOffsetPagination
+    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
 
     def get_queryset(self):
         """Список комментариев под определёным отзывом."""

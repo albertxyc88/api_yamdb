@@ -109,10 +109,6 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    name = models.CharField(
-        max_length=200,
-        verbose_name='Краткое название отзыва'
-    )
     text = models.TextField(
         blank=False,
         verbose_name='Текст отзыва',
@@ -124,13 +120,13 @@ class Review(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='review',
+        related_name='reviews',
         verbose_name='Автор',
     )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='review',
+        related_name='reviews',
         verbose_name='Произведение',
     )
     score = models.IntegerField(
@@ -143,7 +139,7 @@ class Review(models.Model):
         ordering = ('title', )
 
     def __str__(self):
-        return self.name[:STR_NUMBER]
+        return self.title[:STR_NUMBER]
 
 
 class Comment(models.Model):

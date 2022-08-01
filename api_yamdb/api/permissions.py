@@ -18,8 +18,3 @@ class Is_AuthorAdminModeratorCreate_Or_ReadOnly(permissions.BasePermission):
             return False
 
         return True
-
-class AllowwAnyPlease(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if self.request.method == 'GET':
-            return True
