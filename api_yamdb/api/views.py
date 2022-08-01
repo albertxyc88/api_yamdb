@@ -1,29 +1,20 @@
-from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, viewsets
-from reviews.models import Category, Genre, Title
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Title
 
 from .permissions import IsAdminOnly, IsAdminOrReadOnly, ReadOnly
-from .serializers import (
-    EmailSerializer,
-    UserSerializer,
-    RoleSerializer,
-    ConfirmationCodeSerializer,
-    CategorySerializer,
-    GenreSerializer,
-    TitleSerializer,
-    ReadOnlyTitleSerializer
-)
+from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
+                          EmailSerializer, GenreSerializer,
+                          ReadOnlyTitleSerializer, RoleSerializer,
+                          TitleSerializer, UserSerializer)
 from .utils import send_code
-
 
 User = get_user_model()
 
@@ -124,21 +115,3 @@ def obtain_token(request):
         token = AccessToken.for_user(user)
         return Response({'your token': str(token)}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = (AllowAny,)
-
-
-class GenreViewSet(viewsets.ModelViewSet):
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
-    permission_classes = (AllowAny,)
-
-
-class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    permission_classes = (AllowAny,)

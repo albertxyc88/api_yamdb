@@ -1,8 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 from reviews.models import Category, Genre, Title
-from .validators import is_correct_username, is_correct_email
+
+from .validators import is_correct_email, is_correct_username
 
 User = get_user_model()
 
@@ -42,7 +43,6 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
     )
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
-
 
 
 class EmailSerializer(serializers.Serializer):
@@ -111,24 +111,3 @@ class ConfirmationCodeSerializer(serializers.Serializer):
 
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-
-
-class CategorySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = '__all__'
-        model = Category
-
-
-class GenreSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = '__all__'
-        model = Genre
-
-
-class TitleSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = '__all__'
-        model = Title
