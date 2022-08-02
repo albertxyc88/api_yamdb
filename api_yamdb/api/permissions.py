@@ -15,7 +15,7 @@ class IsAdminOnly(BasePermission):
                 user.role in access_roles
                 or user.is_superuser
                 or user.is_staff
-                )
+            )
         )
 
 
