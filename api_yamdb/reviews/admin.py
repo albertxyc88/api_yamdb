@@ -10,6 +10,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ('pub_date',)
     empty_value_display = '-пусто-'
 
+
 admin.site.register(Category)
 admin.site.register(Comment)
 admin.site.register(Genre)

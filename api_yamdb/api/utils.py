@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 
 def send_code(user):
     '''Sending Confirmation Code'''
+    
     number = randint(1000000, 10000000)
     confirmation_code = str(number) + str(user.username)
     user.confirmation_code = confirmation_code

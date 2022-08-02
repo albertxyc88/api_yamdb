@@ -11,7 +11,8 @@ from reviews.models import Category, Genre, Title, Review
 
 from .filters import TitlesFilter
 
-from .permissions import IsAdminOnly, IsAdminOrReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly
+from .permissions import (IsAdminOnly, IsAdminOrReadOnly,
+                          Is_AuthorAdminModeratorCreate_Or_ReadOnly)
 from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
                           EmailSerializer, GenreSerializer,
                           ReadOnlyTitleSerializer, RoleSerializer,
@@ -58,7 +59,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitlesFilter
-
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
@@ -133,7 +133,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """
-        Добавить новый отзыв. 
+        Добавить новый отзыв.
         Пользователь может оставить только один отзыв на произведение.
         Права доступа: Аутентифицированные пользователи.
         """
@@ -145,6 +145,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
+
     def get_queryset(self):
         """Список комментариев под определёным отзывом."""
         review_id = self.kwargs.get('review_id')
