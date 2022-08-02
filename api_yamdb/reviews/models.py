@@ -111,10 +111,6 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    name = models.CharField(
-        max_length=200,
-        verbose_name='Краткое название отзыва'
-    )
     text = models.TextField(
         blank=False,
         verbose_name='Текст отзыва',
@@ -140,12 +136,17 @@ class Review(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='review_unique')
+        ]
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ('title', )
 
     def __str__(self):
-        return self.name[:STR_NUMBER]
+        return self.title[:STR_NUMBER]
 
 
 class Comment(models.Model):
