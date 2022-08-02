@@ -74,6 +74,7 @@ class Migration(migrations.Migration):
             name='Review',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=200, verbose_name='Краткое название отзыва')),
                 ('text', models.TextField(verbose_name='Текст отзыва')),
                 ('pub_date', models.DateTimeField(auto_now_add=True, verbose_name='Дата отзыва')),
                 ('score', models.IntegerField(verbose_name='Рейтинг')),

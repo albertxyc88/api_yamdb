@@ -18,11 +18,11 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLES, default=USER)
     password = models.CharField(max_length=128, blank=True, null=True)
     confirmation_code = models.CharField(max_length=255, blank=True, null=True)
-    
+
     class Meta:
         ordering = ['id']
         verbose_name = 'User'
         verbose_name_plural = 'Users'
-    
+
     def __str__(self):
         return self.username
