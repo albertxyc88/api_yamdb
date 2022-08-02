@@ -136,6 +136,11 @@ class Review(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='review_unique')
+        ]
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ('title', )

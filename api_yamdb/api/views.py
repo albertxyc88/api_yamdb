@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Title, Review
 
 from .filters import TitlesFilter
-from .permissions import IsAdminOnly, IsAdminOrReadOnly, ReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly
+from .permissions import IsAdminOnly, IsAdminOrReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly
 from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
                           EmailSerializer, GenreSerializer,
                           ReadOnlyTitleSerializer, RoleSerializer,
@@ -144,7 +144,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
-
     def get_queryset(self):
         """Список комментариев под определёным отзывом."""
         review_id = self.kwargs.get('review_id')
@@ -154,6 +153,5 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Добавление комментария к отзыву."""
         review_id = self.kwargs.get('review_id')
-        print(f'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                     -  {review_id}')
         review = get_object_or_404(Review, id=review_id)
         serializer.save(author=self.request.user, review=review)
