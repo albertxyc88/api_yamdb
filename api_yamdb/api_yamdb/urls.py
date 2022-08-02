@@ -10,8 +10,4 @@ urlpatterns = [
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
-<<<<<<< HEAD
-=======
-    path('api/', include('api.urls')),
->>>>>>> deb1296 (Changing workspace.)
 ]
