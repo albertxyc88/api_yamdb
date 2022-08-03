@@ -11,12 +11,8 @@ from reviews.models import Category, Genre, Title, Review
 
 from .filters import TitlesFilter
 
-<<<<<<< HEAD
 from .permissions import (IsAdminOnly, IsAdminOrReadOnly,
-                          Is_AuthorAdminModeratorCreate_Or_ReadOnly)
-=======
-from .permissions import IsAdminOnly, IsAdminOrReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly
->>>>>>> 3ec51f96fec84ae23b5be1f6ba526b3b579c98bb
+                          IsAuthorModeratorCreateOrReadOnly)
 from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
                           EmailSerializer, GenreSerializer,
                           ReadOnlyTitleSerializer, RoleSerializer,
@@ -127,7 +123,7 @@ def obtain_token(request):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
+    permission_classes = (IsAuthorModeratorCreateOrReadOnly, )
 
     def get_queryset(self):
         """Список отзывов под определёным произведением."""
@@ -148,16 +144,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
+    permission_classes = (IsAuthorModeratorCreateOrReadOnly, )
 
     def get_queryset(self):
         """Список комментариев под определёным отзывом."""
         review_id = self.kwargs.get('review_id')
+        title_id = self.kwargs.get('title_id')
+        review = get_object_or_404(Title, id=title_id)
         review = get_object_or_404(Review, id=review_id)
         return review.comments.all()
 
     def perform_create(self, serializer):
         """Добавление комментария к отзыву."""
         review_id = self.kwargs.get('review_id')
+        title_id = self.kwargs.get('title_id')
+        review = get_object_or_404(Title, id=title_id)
         review = get_object_or_404(Review, id=review_id)
         serializer.save(author=self.request.user, review=review)

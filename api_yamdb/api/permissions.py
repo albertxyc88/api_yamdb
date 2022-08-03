@@ -42,7 +42,7 @@ class ReadOnly(BasePermission):
         return request.method in SAFE_METHODS
 
 
-class Is_AuthorAdminModeratorCreate_Or_ReadOnly(BasePermission):
+class IsAuthorModeratorCreateOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return (request.method in SAFE_METHODS

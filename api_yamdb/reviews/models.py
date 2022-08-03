@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from users.models import User
 from .validators import validate_slug, validate_year
@@ -133,6 +134,10 @@ class Review(models.Model):
     )
     score = models.IntegerField(
         verbose_name='Рейтинг',
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ]
     )
 
     class Meta:

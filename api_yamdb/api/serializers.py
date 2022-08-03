@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.forms import ValidationError
 from rest_framework import serializers
 from reviews.models import Category, Genre, Title, Comment, Review
@@ -134,15 +135,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         exclude = ('title',)
-        read_only_fields = ('title', )
 
     def validate(self, value):
         if self.context['request'].method == 'POST':
             author = self.context.get('request').user
-            title_id = self.context['view'].kwargs['title_id']
+            title_id = self.context['view'].kwargs.get('title_id')
+            title = get_object_or_404(Title, id=title_id)
             if Review.objects.filter(
                 author=author,
-                title_id=title_id
+                title=title
             ).exists():
                 raise serializers.ValidationError(
                     'У Вас уже есть отзыв на данное произведение.'
