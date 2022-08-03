@@ -11,8 +11,12 @@ from reviews.models import Category, Genre, Title, Review
 
 from .filters import TitlesFilter
 
+<<<<<<< HEAD
 from .permissions import (IsAdminOnly, IsAdminOrReadOnly,
                           Is_AuthorAdminModeratorCreate_Or_ReadOnly)
+=======
+from .permissions import IsAdminOnly, IsAdminOrReadOnly, Is_AuthorAdminModeratorCreate_Or_ReadOnly
+>>>>>>> 3ec51f96fec84ae23b5be1f6ba526b3b579c98bb
 from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
                           EmailSerializer, GenreSerializer,
                           ReadOnlyTitleSerializer, RoleSerializer,

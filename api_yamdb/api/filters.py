@@ -18,4 +18,8 @@ class TitlesFilter(filters.FilterSet):
 
     class Meta:
         model = Title
+<<<<<<< HEAD
         fields = ['name', 'year', 'genre', 'category']
+=======
+        fields = ['name', 'year', 'genre', 'category']
+>>>>>>> 3ec51f96fec84ae23b5be1f6ba526b3b579c98bb
