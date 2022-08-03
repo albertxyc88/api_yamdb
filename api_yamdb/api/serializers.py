@@ -9,6 +9,7 @@ User = get_user_model()
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Category serializer."""
 
     class Meta:
         exclude = ('id',)
@@ -17,6 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Genre serializer."""
 
     class Meta:
         exclude = ('id',)
@@ -25,6 +27,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    """Title Serializer."""
+
     genre = serializers.SlugRelatedField(
         slug_field='slug', many=True, queryset=Genre.objects.all()
     )
@@ -38,6 +42,8 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class ReadOnlyTitleSerializer(serializers.ModelSerializer):
+    """ReadOnlyTitle Serializer."""
+
     rating = serializers.IntegerField(
         source='reviews__score__avg', read_only=True
     )
@@ -118,6 +124,7 @@ class ConfirmationCodeSerializer(serializers.Serializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Review serializer."""
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -133,21 +140,26 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             author = self.context.get('request').user
             title_id = self.context['view'].kwargs['title_id']
-            if Review.objects.filter(author=author, title_id=title_id).exists():
-                raise serializers.ValidationError (
-                'У Вас уже есть отзыв на данное произведение. Выберите другое'
-            )
+            if Review.objects.filter(
+                author=author,
+                title_id=title_id
+            ).exists():
+                raise serializers.ValidationError(
+                    'У Вас уже есть отзыв на данное произведение.'
+                    'Выберите другое'
+                )
         return value
 
     def validate_score(self, value):
         if 1 <= value <= 10:
             return value
-        raise serializers.ValidationError (
+        raise serializers.ValidationError(
             'Оценка произведения должна быть в диапазоне от 1 до 10'
         )
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Comment serializer."""
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
