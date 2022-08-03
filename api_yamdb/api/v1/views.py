@@ -7,12 +7,11 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from reviews.models import Category, Genre, Title, Review
 
+from reviews.models import Category, Genre, Review, Title
 from .filters import TitlesFilter
-
 from .permissions import (IsAdminOnly, IsAdminOrReadOnly,
-                          Is_AuthorAdminModeratorCreate_Or_ReadOnly)
+                          ModeratorOwnerOrReadOnly)
 from .serializers import (CategorySerializer, ConfirmationCodeSerializer,
                           EmailSerializer, GenreSerializer,
                           ReadOnlyTitleSerializer, RoleSerializer,
@@ -23,12 +22,16 @@ from .utils import send_code
 User = get_user_model()
 
 
-class CategoryViewSet(
+class CreateDestroyListViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
+    pass
+
+
+class CategoryViewSet(CreateDestroyListViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -37,12 +40,7 @@ class CategoryViewSet(
     lookup_field = 'slug'
 
 
-class GenreViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
-):
+class GenreViewSet(CreateDestroyListViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -97,11 +95,10 @@ def send_confirmation_code(request):
     serializer.is_valid(raise_exception=True)
     username = serializer.validated_data.get('username')
     email = serializer.validated_data.get('email')
-    if User.objects.filter(username=username).exists():
-        user = User.objects.create_user(username=username, email=email)
-        send_code(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    user = User.objects.create_user(username=username, email=email)
+    user, created = User.objects.get_or_create(
+        username=username,
+        email=email,
+    )
     send_code(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -123,7 +120,7 @@ def obtain_token(request):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
+    permission_classes = (ModeratorOwnerOrReadOnly, )
 
     def get_queryset(self):
         """Список отзывов под определёным произведением."""
@@ -144,16 +141,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (Is_AuthorAdminModeratorCreate_Or_ReadOnly, )
+    permission_classes = (ModeratorOwnerOrReadOnly, )
 
     def get_queryset(self):
         """Список комментариев под определёным отзывом."""
         review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Review, id=review_id)
+        title_id = self.kwargs.get('title_id')
+        review = get_object_or_404(Review, id=review_id, title_id=title_id)
         return review.comments.all()
 
     def perform_create(self, serializer):
         """Добавление комментария к отзыву."""
         review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Review, id=review_id)
+        title_id = self.kwargs.get('title_id')
+        review = get_object_or_404(Review, id=review_id, title_id=title_id)
         serializer.save(author=self.request.user, review=review)

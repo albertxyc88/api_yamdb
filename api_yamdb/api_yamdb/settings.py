@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    'api.apps.ApiConfig',
+    'api.v1.apps.ApiConfig',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -120,7 +120,8 @@ REST_FRAMEWORK = {
 
     'PAGE_SIZE': 5,
 
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning'
 }
 
 SIMPLE_JWT = {

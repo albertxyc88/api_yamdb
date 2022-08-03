@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -55,12 +56,8 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         verbose_name='Год',
-        validators=(validate_year,)
-    )
-    rating = models.IntegerField(
-        verbose_name='Рейтинг',
-        blank=True,
-        null=True
+        validators=(validate_year,),
+        db_index=True
     )
     description = models.TextField(
         verbose_name='Описание',
@@ -133,6 +130,10 @@ class Review(models.Model):
     )
     score = models.IntegerField(
         verbose_name='Рейтинг',
+        validators=[
+            MinValueValidator(1, 'Значение должно быть от 1 до 10'),
+            MaxValueValidator(10, 'Значение должно быть от 1 до 10')
+        ]
     )
 
     class Meta:
