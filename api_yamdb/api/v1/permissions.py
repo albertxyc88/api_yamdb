@@ -7,14 +7,9 @@ User = get_user_model()
 class IsAdminOnly(BasePermission):
 
     def has_permission(self, request, view):
-        user = request.user
-        access_roles = ('admin',)
         return (
-            user.is_authenticated
-            and (
-                user.role in access_roles
-                or user.is_superuser
-                or user.is_staff
+            request.user.is_authenticated and (
+                request.user.is_admin or request.user.is_superuser
             )
         )
 
@@ -22,16 +17,12 @@ class IsAdminOnly(BasePermission):
 class IsAdminOrReadOnly(BasePermission):
 
     def has_permission(self, request, view):
-        user = request.user
-        access_roles = ('admin',)
-        if request.method in SAFE_METHODS:
-            return True
         return (
-            user.is_authenticated
-            and (
-                user.role in access_roles
-                or user.is_superuser
-                or user.is_staff
+            request.method in SAFE_METHODS
+            or (
+                request.user.is_authenticated and (
+                    request.user.is_admin or request.user.is_superuser
+                )
             )
         )
 
@@ -42,7 +33,7 @@ class ReadOnly(BasePermission):
         return request.method in SAFE_METHODS
 
 
-class Is_AuthorAdminModeratorCreate_Or_ReadOnly(BasePermission):
+class ModeratorOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return (request.method in SAFE_METHODS

@@ -1,4 +1,4 @@
-from random import randint
+from django.contrib.auth.tokens import default_token_generator
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
@@ -7,8 +7,7 @@ from django.core.mail import send_mail
 def send_code(user):
     '''Sending Confirmation Code'''
 
-    number = randint(1000000, 10000000)
-    confirmation_code = str(number) + str(user.username)
+    confirmation_code = default_token_generator.make_token(user)
     user.confirmation_code = confirmation_code
     user.save()
     send_mail(
