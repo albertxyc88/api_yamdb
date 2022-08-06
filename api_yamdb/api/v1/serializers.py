@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.forms import ValidationError
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Category, Genre, Title, Comment, Review
 
+from reviews.models import Category, Comment, Genre, Review, Title
 from .validators import is_correct_email, is_correct_username
 
 User = get_user_model()
@@ -48,8 +49,8 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(
         source='reviews__score__avg', read_only=True
     )
-    genre = GenreSerializer(many=True)
-    category = CategorySerializer()
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -139,8 +140,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, value):
         if self.context['request'].method == 'POST':
             author = self.context.get('request').user
-            title_id = self.context['view'].kwargs.get('title_id')
-            title = get_object_or_404(Title, id=title_id)
+            title_id = self.context['view'].kwargs['title_id']
+            title = get_object_or_404(Title, pk=title_id)
             if Review.objects.filter(
                 author=author,
                 title=title
@@ -150,13 +151,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                     'Выберите другое'
                 )
         return value
-
-    def validate_score(self, value):
-        if 1 <= value <= 10:
-            return value
-        raise serializers.ValidationError(
-            'Оценка произведения должна быть в диапазоне от 1 до 10'
-        )
 
 
 class CommentSerializer(serializers.ModelSerializer):
