@@ -12,7 +12,7 @@
 
 ## Технологии
 
-Python 3.7, Django 2.2, JWT, DRF, SQLite.
+Python 3.7, Django 2.2, JWT, DRF, SQLite3.
 
 ## Установка
 
